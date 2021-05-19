@@ -53,26 +53,36 @@
 </head>
 
 <body>
-    <div id="adminMenu" class="box-shadow" style="display: none; flex-direction: column; width: 110px;position: absolute;
+    <div style="width: 400px; border: 2px solid black; padding: 20px;">
+
+        <div id="adminMenu" class="box-shadow" style="display: none; flex-direction: column; width: 110px;position: absolute;
     margin-top: 40px;
     margin-left: 280px;
     background-color: black;
     padding: 4px;
     border-radius: 6px;;">
-        <button style="font-size: 10px; text-align: end; font-weight: bold;" onclick="showAdminMenu()">Close X</button>
-        <button style="font-size: 10px;" onclick="deleteLocalData()">Delete Local Data</button>
-        <button style="font-size: 10px;" onclick="deleteCLoudData()">Delete Cloud Data</button>
+            <button style="font-size: 10px; text-align: end; font-weight: bold;" onclick="showAdminMenu()">Close
+                X</button>
+            <button style="font-size: 10px;" onclick="deleteLocalData()">Delete Local Data</button>
+            <button style="font-size: 10px;" onclick="deleteCLoudData()">Delete Cloud Data</button>
+        </div>
+        <div style="display: flex; justify-content: center; background-color: black;
+        color: white;
+        font-weight: bold;">
+            <div>SCANNER v1.0</div>
+        </div>
+        <div style="display: flex; width: 400px; flex-direction: row-reverse; margin-bottom: 10px; margin-top: 10px;">
+            <button onclick="showAdminMenu()">Admin</button>
+        </div>
+        <div class="option-container">
+            <button onclick="openScanner()">scan</button>
+            <button onclick="redirectToPage('displayLocalData.html')">Display local data</button>
+            <button onclick="uploadToCloud()">upload to cloud</button>
+            <button onclick="redirectToPage('displayCloudData.html')">display cloud data</button>
+        </div>
+        <img style="max-height: 100%; max-width: 100%;" src="./img/qr-png.png" />
     </div>
-    <div>SCANNER v1.0</div>
-    <div style="display: flex; width: 400px; flex-direction: row-reverse; margin-bottom: 10px;">
-        <button onclick="showAdminMenu()">Admin</button>
-    </div>
-    <div class="option-container">
-        <button onclick="openScanner()">scan</button>
-        <button onclick="redirectToPage('displayLocalData.html')">Display local data</button>
-        <button onclick="uploadToCloud()">upload to cloud</button>
-        <button onclick="redirectToPage('displayCloudData.html')">display cloud data</button>
-    </div>
+
     <div id="qr-reader" style="width:500px"></div>
     <script src="cordova.js"></script>
     <script src="js/index.js"></script>
