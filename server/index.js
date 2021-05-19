@@ -32,8 +32,11 @@ app.get("/getData", (req, res) => {
   })
 })
 
-app.post("/postData", (req, res) => {
-  albumCollection.post(req.body, (err, result) => {
+app.post("/postData", async (req, res) => {
+
+  await albumCollection.remove({});
+
+  albumCollection.insert(req.body, (err, result) => {
     if (err) {
       console.log("Error: ", err);
     } else {

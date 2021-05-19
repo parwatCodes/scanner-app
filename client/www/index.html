@@ -32,33 +32,50 @@
         -->
     <!-- <meta http-equiv="Content-Security-Policy"
         content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;"> -->
-        <meta http-equiv="Content-Security-Policy" content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;">
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
     <meta name="color-scheme" content="light dark">
     <link rel="stylesheet" href="css/index.css">
     <title>Hello World</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital@0;1&display=swap" rel="stylesheet">
+
 
     <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
     <script type="text/javascript" src="js/scanner.js"></script>
 
 </head>
 
 <body>
+    <div id="adminMenu" class="box-shadow" style="display: none; flex-direction: column; width: 110px;position: absolute;
+    margin-top: 40px;
+    margin-left: 280px;
+    background-color: black;
+    padding: 4px;
+    border-radius: 6px;;">
+        <button style="font-size: 10px;" onclick="deleteLocalData()">Delete Local Data</button>
+        <button style="font-size: 10px;" onclick="deleteCLoudData()">Delete Cloud Data</button>
+    </div>
     <div>SCANNER v1.0</div>
+    <div style="display: flex; width: 400px; flex-direction: row-reverse; margin-bottom: 10px;">
+        <button onclick="showAdminMenu()">Admin</button>
+    </div>
     <div class="option-container">
         <button onclick="openScanner()">scan</button>
-        <button onclick="displayLocalData()">Display local data</button>
-        <div onclick="uploadToCloud()">upload to cloud</div>
-        <div onclick="displayCloudData()">display cloud data</div>
+        <button onclick="redirectToPage('displayLocalData.html')">Display local data</button>
+        <button onclick="uploadToCloud()">upload to cloud</button>
+        <button onclick="redirectToPage('displayCloudData.html')">display cloud data</button>
     </div>
     <div id="qr-reader" style="width:500px"></div>
     <script src="cordova.js"></script>
     <script src="js/index.js"></script>
     <script>
-        console.log("ccc", Html5QrcodeScanner)
     </script>
 </body>
 

@@ -1,3 +1,6 @@
+const PREFIX = "ALBUM";
+const API_URI = "http://localhost:4000";
+
 function openScanner() {
 	var html5QrcodeScanner = new Html5QrcodeScanner(
 		"qr-reader", { fps: 10, qrbox: 250 });
@@ -5,64 +8,164 @@ function openScanner() {
 	html5QrcodeScanner.render(onScanSuccess);
 }
 
-// sample json data to be stored in QR code.
-// {
-// 	"albumID": 1,
-// 	"albumArtist": "Focus",
-// 	"albumType": "Jazz Fusion",
-// 	"albumName": "Moving Waves",
-// 	"albumCoverURL": "https://------------------",
-// 	"albumReview": "This is a classic prog album recorded in 1971 in mostly instrumental and there are lengthy solos. I first bought this record in the early 1970s and I loved it. It still sounds good. I grew up in Brisbane and Focus was a popular band in 1973. Jan Akkerman the world's top guitarist in 1973 - and now!. Saw these Guys in Brisbane at Festival Hall - age 15 - great! - pcw"
-// }
+function getLocalData() {
+	const keys = Object.keys(localStorage);
+	const data = [];
 
-// {
-// 	"albumID": 2,
-// 	"albumArtist": "PJ Harvey",
-// 	"albumType: "Alternative rock",
-// 	"albumName": "Stories from the City, Stories from the Sea",
-// 	'albumCoverURL': "",
-// 	"albumReview": "Polly Harvey, happy? It was a surprise: Harvey had spent four records howling her sexual obsessions and romantic disappointments over stark postmodern blues. But album number five found her in New York and in love, crowing, 'I'm immortal/When I'm with you' in the surging opener, 'Big Exit.' Her guitar attack was still forceful but softened around the edges by marimba, piano, organ and guest vocalist Thom Yorke. The result was lusher than anything she had recorded but also vibrant and catchy as all hell, especially the garage-y 'Good Fortune' and the yearning 'A Place Called Home' — mash notes to lovers in the big city."
-// }
+	keys.forEach(key => {
+		const [prefix, id] = key.split("-");
 
-// {
-// 	"albumID": 3,
-// 	"albumArtist": "OutKast",
-// 	"albumType: " Hip hop music, Funk, Rhythm and blues, Soul music",
-// 	"albumName": "Speakerboxxx/The Love Below",
-// 	'albumCoverURL': "",
-// 	"albumReview": "It sounded crazy: For their fifth record, both members of hip-hop's most creative duo would record his own LP. What they ended up with was hip-hop's White Album, an overlong but thrilling behemoth fueled by weed, ego and a thousand old funk records. Big Boi's pulverizing Speakerboxxx deepened OutKast's adventures in crunk. Far wonkier was The Love Below, where André 3000 tried to be Prince, Beck and George Clinton all at once, crafting tunes as bright and strange as his wardrobe — including the smash 'Hey Ya!' and 'Roses,'' which 'really smell like poo-poo.''
-// }
+		if (prefix === PREFIX) {
+			const d = localStorage.getItem(key);
+			data.push(d);
+		}
+	});
 
-
-// {
-// 	"albumID": 4,
-// 	"albumArtist": "Daft Punk",
-// 	"albumType: "French house; disco; post-disco",
-// 	"albumName": "Discovery",
-// 	'albumCoverURL': "Sci-Fi",
-// 	"albumReview": "The French techno duo taught a generation of indie kids to dance with this international club hit, building a disco empire out of house bass lines, off-kilter keyboards, mysterious robot vocals and a stack of old Chic records. Thomas Bangalter and Guy-Manuel de Homem-Christo never liked to show their faces, but for all their glitz and sci-fi costumes, they sounded inescapably humane. Their 1970s sci-fi moves were a true time warp — like watching TRON and Saturday Night Fever morph into the same movie. And with the Wurlitzer burble of 'Digital Love,' they made the Supertramp-keyboard sound seem funky."
-// }
+	return data;
+}
 
 function displayLocalData() {
+	const data = getLocalData();
 
+	createHtml(data);
+}
+
+function createHtml(data) {
+	let items = [];
+
+	console.log('--------', data)
+	if (data.length) {
+		data.forEach(da => {
+
+			let d = da;
+			let msg1 = "Cloud Data";
+			let msg2 = "No Cloud Data";
+
+			console.log("XXXXXX", typeof da);
+
+			if (typeof da === "string") {
+				// This is local data
+				d = JSON.parse(da);
+				msg1 = "Local Data";
+				msg2 = "No Local Data";
+			}
+
+			items.push('<div> <div>' + msg1 + '</div> <div class="row"> <h4>Cover</h4> <img src="' + d.albumCoverURL + '"/> </div> <div  class="row"><h4>ID</h4> <div>' + d.albumID + '</div> </div> <div  class="row"> <h4>Artist </h4> <div>' + d.albumArtist + ' </div> </div> <div  class="row"> <h4>Album </h4><div>' + d.albumName + ' </div> </div> <div  class="row"> <h4>Album </h4><div>' + d.albumType + ' </div></div> <div  class="row"> <h4>Review</h4> <div>' + d.albumReview + ' </div></div></div>');
+
+		});
+
+		$('#albumData').html(items.join(''));
+	} else {
+		$('#albumData').html(msg2);
+	}
 }
 
 function uploadToCloud() {
+	const data = getLocalData();
 
+	const url = `${API_URI}/postData`;
+
+	const parsedArrayData = data.map(d => JSON.parse(d));
+
+	fetch(url, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(parsedArrayData)
+	})
+		.then(response => response.json())
+		.then(data => {
+			console.log(data);
+			alert(JSON.stringify({
+				"code": 200,
+				"status": "Success",
+				"msg": "Data saved to Cloud"
+			}));
+		})
+		.catch(err => console.log("Error: ", err));
+}
+
+function redirectToPage(pageName) {
+	window.location.href = pageName;
+}
+
+function getCloudDataFromAPI() {
+	const url = `${API_URI}/getData`;
+
+	return fetch(url)
+		.then(response => response.json())
+		.then(albums => albums)
+		.catch(err => {
+			console.log("Error", err);
+		});
 }
 
 function displayCloudData() {
+	getCloudDataFromAPI().then(data => {
 
+		createHtml(data);
+	}).catch(err => {
+		console.log("Error: ", err);
+	});
+}
+
+function deleteCLoudData() {
+	const url = `${API_URI}/delData`;
+
+	fetch(url, {
+		method: "DELETE",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	})
+		.then(response => response.json())
+		.then(data => {
+			alert(JSON.stringify({
+				"code": 200,
+				"status": "Success",
+				"msg": "Data Deleted from cloud"
+			}));
+		})
+		.catch(err => console.log("Error: ", err));
+}
+
+function deleteLocalData() {
+	localStorage.clear();
+	alert(JSON.stringify({
+		"code": 200,
+		"status": "Success",
+		"msg": "Data Deleted from Local"
+	}));
 }
 
 
 function onScanSuccess(qrMessage) {
 	// handle the scanned code as you like, for example:
 	console.log(`QR matched = ${qrMessage}`);
+
+	saveDataToLocalStorage(qrMessage);
 }
 
 function onScanFailure(error) {
 	// handle scan failure, usually better to ignore and keep scanning.
 	// for example:
 	console.warn(`QR error = ${error}`);
+}
+
+function saveDataToLocalStorage(data) {
+	const KEY = `${PREFIX}-${JSON.parse(data).albumID}`;
+
+	localStorage.setItem(KEY, data);
+}
+
+
+function showAdminMenu() {
+	var x = document.getElementById("adminMenu");
+
+	if (x.style.display === "none") {
+    x.style.display = "flex";
+  } else {
+    x.style.display = "none";
+  }
 }
