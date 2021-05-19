@@ -10,6 +10,8 @@ function openScanner() {
 
 function getLocalData() {
 	const keys = Object.keys(localStorage);
+
+	console.log("llll", keys);
 	const data = [];
 
 	keys.forEach(key => {
@@ -27,27 +29,29 @@ function getLocalData() {
 function displayLocalData() {
 	const data = getLocalData();
 
-	createHtml(data);
+	createHtml(data, "local");
 }
 
-function createHtml(data) {
+function createHtml(data, type) {
 	let items = [];
+	let msg1;
+	let msg2;
 
-	console.log('--------', data)
+	if (type === "local") {
+		msg2 = "No Local Data"
+	} else {
+		msg2 = "No Cloud Data"
+	}
+
 	if (data.length) {
 		data.forEach(da => {
-
 			let d = da;
-			let msg1 = "Cloud Data";
-			let msg2 = "No Cloud Data";
-
-			console.log("XXXXXX", typeof da);
-
 			if (typeof da === "string") {
 				// This is local data
 				d = JSON.parse(da);
 				msg1 = "Local Data";
-				msg2 = "No Local Data";
+			} else {
+				msg1 = "Cloud Data";
 			}
 
 			items.push('<div> <div>' + msg1 + '</div> <div class="row"> <h4>Cover</h4> <img src="' + d.albumCoverURL + '"/> </div> <div  class="row"><h4>ID</h4> <div>' + d.albumID + '</div> </div> <div  class="row"> <h4>Artist </h4> <div>' + d.albumArtist + ' </div> </div> <div  class="row"> <h4>Album </h4><div>' + d.albumName + ' </div> </div> <div  class="row"> <h4>Album </h4><div>' + d.albumType + ' </div></div> <div  class="row"> <h4>Review</h4> <div>' + d.albumReview + ' </div></div></div>');
@@ -104,7 +108,7 @@ function getCloudDataFromAPI() {
 function displayCloudData() {
 	getCloudDataFromAPI().then(data => {
 
-		createHtml(data);
+		createHtml(data, "cloud");
 	}).catch(err => {
 		console.log("Error: ", err);
 	});
@@ -164,8 +168,8 @@ function showAdminMenu() {
 	var x = document.getElementById("adminMenu");
 
 	if (x.style.display === "none") {
-    x.style.display = "flex";
-  } else {
-    x.style.display = "none";
-  }
+		x.style.display = "flex";
+	} else {
+		x.style.display = "none";
+	}
 }
